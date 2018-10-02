@@ -2,30 +2,34 @@
 -define(test_gen_thrift_included__, yeah).
 
 
-
 %% struct 'MessageAttachment'
--record('MessageAttachment', {
-    'name' :: binary(),
-    'mime_type' :: binary() | undefined,
-    'data' :: binary()
+-define(test_gen_thrift_MessageAttachment, #{
+    '__type' => 'MessageAttachment',
+    'name' => <<"">>,
+    'mime_type' => undefined,
+    'data' => <<"">>
 }).
 
 %% struct 'MailBody'
--record('MailBody', {
-    'content_type' :: binary() | undefined,
-    'text' :: binary()
+-define(test_gen_thrift_MailBody, #{
+    '__type' => 'MailBody',
+    'content_type' => undefined,
+    'text' => <<"">>
 }).
 
 %% struct 'MessageMail'
--record('MessageMail', {
-    'mail_body' :: test_gen_thrift:'MailBody'(),
-    'subject' :: binary() | undefined,
-    'from_email' :: binary(),
-    'to_emails' :: [binary()],
-    'attachments' :: test_gen_thrift:'MessageAttachments'() | undefined
+-define(test_gen_thrift_MessageMail, #{
+    '__type' => 'MessageMail',
+    'mail_body' => ?test_gen_thrift_MailBody,
+    'subject' => undefined,
+    'from_email' => <<"">>,
+    'to_emails' => [],
+    'attachments' => undefined
 }).
 
 %% exception 'InvalidRequest'
--record('InvalidRequest', {}).
+-define(test_gen_thrift_InvalidRequest, #{
+    '__type' => 'InvalidRequest',
+    }).
 
 -endif.
