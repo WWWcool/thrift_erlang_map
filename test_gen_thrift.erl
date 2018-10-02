@@ -6,8 +6,6 @@
 
 -module(test_gen_thrift).
 
--include("test_gen_thrift.hrl").
-
 -export([namespace/0]).
 -export([enums/0]).
 -export([typedefs/0]).
@@ -16,7 +14,6 @@
 -export([typedef_info/1]).
 -export([enum_info/1]).
 -export([struct_info/1]).
--export([record_name/1]).
 -export([functions/1]).
 -export([function_info/3]).
 
@@ -75,7 +72,7 @@
 -type 'MessageAttachment'() :: #{
     '__type' := atom(),
     'name' := binary(),
-    'mime_type' := binary() | undefined,
+    'mime_type' => binary(),
     'data' := binary()
 }.
 
@@ -86,7 +83,7 @@
 %% struct 'MailBody'
 -type 'MailBody'() :: #{
     '__type' := atom(),
-    'content_type':= binary() | undefined,
+    'content_type'=> binary(),
     'text' := binary()
 }.
 
@@ -94,10 +91,10 @@
 -type 'MessageMail'() :: #{
     '__type' := atom(),
     'mail_body' := test_gen_thrift:'MailBody'(),
-    'subject' := binary() | undefined,
+    'subject' => binary(),
     'from_email' := binary(),
     'to_emails' := [binary()],
-    'attachments' := test_gen_thrift:'MessageAttachments'() | undefined
+    'attachments' => test_gen_thrift:'MessageAttachments'()
 }.
 
 %% exception 'InvalidRequest'
@@ -195,10 +192,9 @@ enum_info(_) -> erlang:error(badarg).
 
 struct_info('MessageAttachment') ->
     {struct, struct, [
-        {1, required, string, '__type', 'MessageAttachment'},
-        {2, required, string, 'name', undefined},
-        {3, optional, string, 'mime_type', undefined},
-        {4, required, string, 'data', undefined}
+        {1, required, string, 'name', undefined},
+        {2, optional, string, 'mime_type', undefined},
+        {3, required, string, 'data', undefined}
     ]};
 
 struct_info('Message') ->
@@ -208,43 +204,23 @@ struct_info('Message') ->
 
 struct_info('MailBody') ->
     {struct, struct, [
-        {1, required, string, '__type', 'MailBody'},
-        {2, optional, string, 'content_type', undefined},
-        {3, required, string, 'text', undefined}
+        {1, optional, string, 'content_type', undefined},
+        {2, required, string, 'text', undefined}
     ]};
 
 struct_info('MessageMail') ->
     {struct, struct, [
-        {1, required, string, '__type', 'MessageMail'},
-        {2, required, {struct, struct, {test_gen_thrift, 'MailBody'}}, 'mail_body', undefined},
-        {3, optional, string, 'subject', undefined},
-        {4, required, string, 'from_email', undefined},
-        {5, required, {list, string}, 'to_emails', undefined},
-        {6, optional, {list, {struct, struct, {test_gen_thrift, 'MessageAttachment'}}}, 'attachments', undefined}
+        {1, required, {struct, struct, {test_gen_thrift, 'MailBody'}}, 'mail_body', undefined},
+        {2, optional, string, 'subject', undefined},
+        {3, required, string, 'from_email', undefined},
+        {4, required, {list, string}, 'to_emails', undefined},
+        {5, optional, {list, {struct, struct, {test_gen_thrift, 'MessageAttachment'}}}, 'attachments', undefined}
     ]};
 
 struct_info('InvalidRequest') ->
-    {struct, exception, [
-        {1, required, string, '__type', 'InvalidRequest'}
-    ]};
+    {struct, exception, []};
 
 struct_info(_) -> erlang:error(badarg).
-
--spec record_name(struct_name() | exception_name()) -> atom() | no_return().
-
-record_name('MessageAttachment') ->
-    'MessageAttachment';
-
-record_name('MailBody') ->
-    'MailBody';
-
-record_name('MessageMail') ->
-    'MessageMail';
-
-record_name('InvalidRequest') ->
-    'InvalidRequest';
-
-record_name(_) -> error(badarg).
 
 -spec functions(service_name()) -> [function_name()] | no_return().
 
