@@ -70,10 +70,10 @@
 
 %% struct 'MessageAttachment'
 -type 'MessageAttachment'() :: #{
-    '__type' := atom(),
-    'name' := binary(),
-    'mime_type' => binary(),
-    'data' := binary()
+    '__type' := 'MessageAttachment',
+    'name' => binary(),
+    'mime_type' := binary(),
+    'data' => binary()
 }.
 
 %% union 'Message'
@@ -82,25 +82,25 @@
 
 %% struct 'MailBody'
 -type 'MailBody'() :: #{
-    '__type' := atom(),
-    'content_type'=> binary(),
-    'text' := binary()
+    '__type' := 'MailBody',
+    'content_type' := binary(),
+    'text' => binary()
 }.
 
 %% struct 'MessageMail'
 -type 'MessageMail'() :: #{
-    '__type' := atom(),
-    'mail_body' := test_gen_thrift:'MailBody'(),
-    'subject' => binary(),
-    'from_email' := binary(),
-    'to_emails' := [binary()],
-    'attachments' => test_gen_thrift:'MessageAttachments'()
+    '__type' := 'MessageMail',
+    'mail_body' => test_gen_thrift:'MailBody'(),
+    'subject' := binary(),
+    'from_email' => binary(),
+    'to_emails' => [binary()],
+    'attachments' := test_gen_thrift:'MessageAttachments'()
 }.
 
 %% exception 'InvalidRequest'
 -type 'InvalidRequest'() :: #{
-    '__type' := atom()
-    }.
+    '__type' := 'InvalidRequest'
+}.
 
 %%
 %% services and functions
