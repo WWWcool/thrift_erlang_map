@@ -14,6 +14,9 @@
 -export([typedef_info/1]).
 -export([enum_info/1]).
 -export([struct_info/1]).
+-export([struct_new/2]).
+-export([struct_get/1]).
+-export([struct_get_type/1]).
 -export([functions/1]).
 -export([function_info/3]).
 
@@ -70,10 +73,10 @@
 
 %% struct 'MessageAttachment'
 -type 'MessageAttachment'() :: #{
-    '__type' := 'MessageAttachment',
-    'name' => binary(),
-    'mime_type' := binary(),
-    'data' => binary()
+    '$struct' := 'MessageAttachment',
+    'name' := binary(),
+    'mime_type' => binary(),
+    'data' := binary()
 }.
 
 %% union 'Message'
@@ -82,24 +85,24 @@
 
 %% struct 'MailBody'
 -type 'MailBody'() :: #{
-    '__type' := 'MailBody',
-    'content_type' := binary(),
-    'text' => binary()
+    '$struct' := 'MailBody',
+    'content_type' => binary(),
+    'text' := binary()
 }.
 
 %% struct 'MessageMail'
 -type 'MessageMail'() :: #{
-    '__type' := 'MessageMail',
-    'mail_body' => test_gen_thrift:'MailBody'(),
-    'subject' := binary(),
-    'from_email' => binary(),
-    'to_emails' => [binary()],
-    'attachments' := test_gen_thrift:'MessageAttachments'()
+    '$struct' := 'MessageMail',
+    'mail_body' := test_gen_thrift:'MailBody'(),
+    'subject' => binary(),
+    'from_email' := binary(),
+    'to_emails' := [binary()],
+    'attachments' => test_gen_thrift:'MessageAttachments'()
 }.
 
 %% exception 'InvalidRequest'
 -type 'InvalidRequest'() :: #{
-    '__type' := 'InvalidRequest'
+    '$struct' := 'InvalidRequest'
 }.
 
 %%
@@ -221,6 +224,79 @@ struct_info('InvalidRequest') ->
     {struct, exception, []};
 
 struct_info(_) -> erlang:error(badarg).
+
+-spec struct_new(struct_name() | exception_name(), map()) -> map() | no_return().
+
+struct_new('MessageAttachment', #{'name' := Arg_name, 'data' := Arg_data}) ->
+    #{
+        '$struct' => 'MessageAttachment',
+        'name' => Arg_name,
+        'data' => Arg_data
+    };
+
+struct_new('Message', #{}) ->
+    #{
+        '$struct' => 'Message'
+    };
+
+struct_new('MailBody', #{'text' := Arg_text}) ->
+    #{
+        '$struct' => 'MailBody',
+        'text' => Arg_text
+    };
+
+struct_new('MessageMail', #{'mail_body' := Arg_mail_body, 'from_email' := Arg_from_email, 'to_emails' := Arg_to_emails}) ->
+    #{
+        '$struct' => 'MessageMail',
+        'mail_body' => Arg_mail_body,
+        'from_email' => Arg_from_email,
+        'to_emails' => Arg_to_emails
+    };
+
+struct_new('InvalidRequest', _) ->
+    #{
+        '$struct' => 'InvalidRequest'
+    };
+
+struct_new(_, _) -> error(badarg).
+
+-spec struct_get(map()) -> map() | no_return().
+
+struct_get(#{'$struct' := 'MessageAttachment'} = Map) ->
+    maps:remove('$struct', Map);
+
+struct_get(#{'$struct' := 'Message'} = Map) ->
+    maps:remove('$struct', Map);
+
+struct_get(#{'$struct' := 'MailBody'} = Map) ->
+    maps:remove('$struct', Map);
+
+struct_get(#{'$struct' := 'MessageMail'} = Map) ->
+    maps:remove('$struct', Map);
+
+struct_get(#{'$struct' := 'InvalidRequest'} = Map) ->
+    maps:remove('$struct', Map);
+
+struct_get(_) -> error(badarg).
+
+-spec struct_get_type(map()) -> atom() | no_return().
+
+struct_get_type(#{'$struct' := 'MessageAttachment'}) ->
+    'MessageAttachment';
+
+struct_get_type(#{'$struct' := 'Message'}) ->
+    'Message';
+
+struct_get_type(#{'$struct' := 'MailBody'}) ->
+    'MailBody';
+
+struct_get_type(#{'$struct' := 'MessageMail'}) ->
+    'MessageMail';
+
+struct_get_type(#{'$struct' := 'InvalidRequest'}) ->
+    'InvalidRequest';
+
+struct_get_type(_) -> error(badarg).
 
 -spec functions(service_name()) -> [function_name()] | no_return().
 
